@@ -47,7 +47,7 @@ func main() {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
-		if data.Token == "" || data.Topic == "" || data.Alert == "" {
+		if data.Token == "" || data.Topic == "" || data.Payload.Title == "" || data.Payload.Subtitle == "" {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
@@ -62,11 +62,17 @@ func main() {
 			http.Error(w, "Invalid topic", http.StatusBadRequest)
 			return
 		}
+		if data.Priority > 10 || data.Priority < 5 {
+			http.Error(w, "Invalid priority", http.StatusBadRequest)
+			return
+		}
 
 		notification := &apns2.Notification{
 			DeviceToken: data.Token,
 			Topic:       data.Topic,
-			Payload:     []byte(`{"aps":{"alert":"` + data.Alert + `"}}`),
+			Payload:     data.Payload,
+			PushType:    apns2.PushTypeAlert,
+			Priority:    data.Priority,
 		}
 		res, err := client.Push(notification)
 		if err != nil {
@@ -79,7 +85,14 @@ func main() {
 }
 
 type Body struct {
-	Token string `json:"token"`
-	Topic string `json:"topic"`
-	Alert string `json:"alert"`
+	Token    string `json:"token"`
+	Topic    string `json:"topic"`
+	Payload  Alert  `json:"aps.alert"`
+	Priority int    `json:"priority"`
+}
+
+type Alert struct {
+	Title    string `json:"title"`
+	Subtitle string `json:"subtitle"`
+	Body     string `json:"body"`
 }
