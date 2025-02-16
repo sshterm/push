@@ -72,19 +72,12 @@ func main() {
 		if err != nil {
 			http.Error(w, "Error sending push notification", 500)
 		} else {
-			rsp := Response{ApnsID: res.ApnsID, Reason: res.Reason, StatusCode: res.StatusCode, Timestamp: res.Timestamp}
-			json.NewEncoder(w).Encode(rsp)
+			json.NewEncoder(w).Encode(res)
 		}
 	})
 	http.ListenAndServe(":8080", nil)
 }
 
-type Response struct {
-	ApnsID     string     `json:"apns_id"`
-	Reason     string     `json:"reason"`
-	StatusCode int        `json:"status_code"`
-	Timestamp  apns2.Time `json:"timestamp"`
-}
 type Body struct {
 	Token string `json:"token"`
 	Topic string `json:"topic"`
