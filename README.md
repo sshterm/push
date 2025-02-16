@@ -22,9 +22,9 @@ docker run --rm -v "$PWD":/app -w /app golang:latest go build -trimpath -ldflags
 ### priority
     The priority of the notification. If you omit this header, APNs sets the notification priority to 10.Specify 10 to send the notification immediately.
 ### topic
-    cn.sshterm.pro (SSH Term Pro)
+    cn.sshterm.pro (SSH Term Pro iOS 7.0+)
     or
-    cn.sshterm.free (SSH Term Free)
+    cn.sshterm.free (SSH Term Free iOS 7.0+)
 
 ```
 curl -v \
