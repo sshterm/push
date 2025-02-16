@@ -1,0 +1,22 @@
+# Configuration file for the push notification service
+
+# The topic to which messages will be published
+topic: cn.sshterm.pro
+
+# The authentication token for accessing the push service
+token: 1234567890
+
+# The API endpoint of the push node
+node: https://push.ssh2.app/apn_push
+
+# The subtitle for the push notifications
+subtitle: Test Server
+
+# The load factor for the push service, which may affect the rate of message delivery
+load: 1.5
+
+# The priority level of the messages, higher values may indicate higher priority，min: 5, max: 10
+priority: 10
+
+# Indicates whether the configuration is for development purposes
+dev: YES

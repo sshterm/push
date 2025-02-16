@@ -3,20 +3,65 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/shirou/gopsutil/v4/cpu"
+	"github.com/shirou/gopsutil/v4/load"
+	"github.com/shirou/gopsutil/v4/mem"
+	"gopkg.in/yaml.v3"
 )
 
 func main() {
-	url := "https://push.sshterm.cn/apn_push"
+	var config Config
+	data, err := os.ReadFile("config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for {
+		c, err := load.Avg()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if c.Load1 > config.Load {
+			title := fmt.Sprintf("Server load is %.2f", c.Load1)
+			subtitle := config.Subtitle
 
-	log.Println(Push("title", "subtitle", "body", "token", "cn.sshterm.pro", 10, url))
+			body := ""
+			if v, err := cpu.Percent(time.Second, false); err == nil && len(v) > 0 {
+				body += fmt.Sprintf("CPU usage is %.2f %%", v[0])
+			}
+			if v, err := mem.VirtualMemory(); err == nil {
+				body += fmt.Sprintf(",Memory usage is %.2f %%", v.UsedPercent)
+			}
+			log.Println(title, subtitle, body)
+			push(title, subtitle, body, config.Token, config.Topic, config.Priority, config.Node, config.Dev)
+		}
+		time.Sleep(time.Minute)
+	}
 }
 
-func Push(title, subtitle, body, token, topic string, priority int, url string) (resBody *Response, err error) {
+type Config struct {
+	Topic    string  `yaml:"topic"`
+	Token    string  `yaml:"token"`
+	Node     string  `yaml:"node"`
+	Load     float64 `yaml:"load"`
+	Priority int     `yaml:"priority"`
+	Dev      bool    `yaml:"dev"`
+	Subtitle string  `yaml:"subtitle"`
+}
+
+func push(title, subtitle, body, token, topic string, priority int, url string, dev bool) (resBody *Response, err error) {
 	var data []byte
 	data, err = json.Marshal(Body{
+		Dev:   dev,
 		Token: token,
 		Topic: topic,
 		Notification: Notification{
@@ -33,6 +78,7 @@ func Push(title, subtitle, body, token, topic string, priority int, url string) 
 	if err != nil {
 		return
 	}
+
 	var res *http.Response
 
 	res, err = http.Post(url, "application/json", bytes.NewBuffer(data))
@@ -47,6 +93,7 @@ func Push(title, subtitle, body, token, topic string, priority int, url string) 
 }
 
 type Body struct {
+	Dev          bool         `json:"dev"`
 	Token        string       `json:"token"`
 	Topic        string       `json:"topic"`
 	Notification Notification `json:"notification"`
