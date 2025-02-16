@@ -7,7 +7,7 @@ SSH Term APP Apple Push Notifications
 # request
 ```
 curl -v \
-  -X POST "https://push.sshterm.cn/apn_push" \
+  -X POST "https://push.ssh2.app/apn_push" \
   -H "Content-Type: application/json" \
   -d '{
         "token": "token",
@@ -38,7 +38,7 @@ curl -v \
 
 
 ## Node
-    https://push.sshterm.cn/apn_push
+    https://push.sshterm.cn/apn_push (China)
     or
     https://push.ssh2.app/apn_push
 
