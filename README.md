@@ -15,9 +15,9 @@ curl -v \
         "notification": {
           "aps": {
             "alert": {
-              "title": "test title",
-              "subtitle": "test subtitle",
-              "body": "test body"
+              "title": "High server load",
+              "subtitle": "OA server issues",
+              "body": "cpu 500% mem 99% disk 99.9%"
             }
           }
         },
@@ -54,34 +54,31 @@ curl -v \
     cn.sshterm.free (SSH Term Free iOS 7.0+)
 
 
-## 《Message Push Service Usage Agreement》
+# Message Push Service Usage Agreement
 
-### I. Service Description
+## I. Service Overview
+1. This message push service is built upon Apple's APNs (Apple Push Notification service), employing a decentralized service model without the need for server hosting.
+2. The content of push messages is restricted to title, subtitle, and body.
 
-1. This message push service is based on Apple APNS and is a decentralized service without server hosting.
+## II. Service Purpose
+1. The primary objective of this service is to facilitate server status monitoring. It is important to note that the APP does not process or retain any records of push messages. Due to iOS's notification mechanism, messages may disappear after being viewed or upon device restart.
 
-2. The content of the push message only includes: title, subtitle, and body.
+## III. Push Token
+1. You will receive a unique push token assigned by Apple. It is crucial to keep this token confidential and not share it with others to avoid the risk of push message abuse.
 
-### II. Push Token
+## IV. Node Information
+1. You may choose between the official nodes: push.sshterm.cn or push.ssh2.app, based on your requirements.
+2. The push node code is open-source. As the push key is not provided to you, messages need to be forwarded to Apple APNs via these nodes.
+3. Nodes implement restriction measures on requests, such as frequency limits and message length limits.
 
-1. You will obtain a unique push token assigned by Apple, which must be kept confidential and not disclosed to others, otherwise it may lead to abuse of the push.
+## V. Privacy Protection
+1. Since you are responsible for sending push messages, it is strictly forbidden to include any sensitive information.
+2. Due to the decentralized nature of the service, push messages are not stored, recorded, or monitored.
+3. This service does not collect any personal information from you and will not send you any advertising content.
+4. If you have concerns about privacy and security, please discontinue using this service.
 
-### III. Node - related
-
-1. The push message can be sent to the official nodes push.sshterm.cn or push.ssh2.app, and you can choose at your own discretion.
-
-2. The push node code is 100% open - source. Since the push key is not provided to you, the message needs to be forwarded to Apple APNS through the node.
-
-3. The node may impose restrictions on requests, such as frequency limits, message length limits, etc.
-
-### IV. Privacy Protection
-
-1. The push message will not be stored, recorded or monitored.
-
-If you do not agree with the contents of this agreement, you will not be able to enable this message push service. Once you start using this service, it means that you agree to all the terms of this agreement.
-
-### Please note:
-
-1. Although there is no emphasis on legal issues at present, in actual applications, it is still recommended to ensure that the agreement conforms to the basic legal compliance framework.
-
-2. If there are updates or other changes in the service, it may be necessary to re - examine the terms of the agreement.
+## VI. Important Notes
+1. Although this agreement does not emphasize legal issues, it is recommended to ensure compliance with basic legal and regulatory frameworks in practical applications.
+2. If there are updates or changes to the service, it may be necessary to re-evaluate the agreement terms.
+3. The current service is free of charge, but there is a possibility of charging or terminating the service in the future.
+4. The final interpretation right of these agreement terms belongs to the author.
