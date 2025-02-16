@@ -7,9 +7,13 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sideshow/apns2"
 	"github.com/sideshow/apns2/token"
+	"golang.org/x/time/rate"
 )
 
 //go:embed config/kid
@@ -35,21 +39,38 @@ func main() {
 	topic := []string{"cn.sshterm.pro", "cn.sshterm.free", "cn.sshterm.dev"}
 
 	client := apns2.NewTokenClient(token).Development() //.Production()
-	http.HandleFunc("/apn_push", func(w http.ResponseWriter, r *http.Request) {
-		body, err := io.ReadAll(r.Body)
+	e := echo.New()
+	e.Use(middleware.BodyLimit("1M"))
+	config := middleware.RateLimiterConfig{
+		Skipper: middleware.DefaultSkipper,
+		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
+			middleware.RateLimiterMemoryStoreConfig{Rate: rate.Limit(10), Burst: 30, ExpiresIn: 3 * time.Minute},
+		),
+		IdentifierExtractor: func(ctx echo.Context) (string, error) {
+			id := ctx.RealIP()
+			return id, nil
+		},
+		ErrorHandler: func(context echo.Context, err error) error {
+			return context.JSON(http.StatusForbidden, nil)
+		},
+		DenyHandler: func(context echo.Context, identifier string, err error) error {
+			return context.JSON(http.StatusTooManyRequests, nil)
+		},
+	}
+
+	e.Use(middleware.RateLimiterWithConfig(config))
+	e.POST("/apn_push", func(c echo.Context) error {
+		body, err := io.ReadAll(c.Request().Body)
 		if err != nil {
-			http.Error(w, "Please send a request body", http.StatusBadRequest)
-			return
+			return echo.NewHTTPError(http.StatusBadRequest, "Please send a request body")
 		}
 		var data Body
 		err = json.Unmarshal(body, &data)
 		if err != nil {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
-			return
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
 		}
 		if data.Token == "" || data.Topic == "" || data.Notification.APS.Alert.Title == "" || data.Notification.APS.Alert.Subtitle == "" {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
-			return
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
 		}
 		var valid bool
 		for _, v := range topic {
@@ -59,12 +80,10 @@ func main() {
 			}
 		}
 		if !valid {
-			http.Error(w, "Invalid topic", http.StatusBadRequest)
-			return
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid topic")
 		}
 		if data.Priority > 10 || data.Priority < 5 {
-			http.Error(w, "Invalid priority", http.StatusBadRequest)
-			return
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid priority")
 		}
 
 		notification := &apns2.Notification{
@@ -76,12 +95,12 @@ func main() {
 		}
 		res, err := client.Push(notification)
 		if err != nil {
-			http.Error(w, "Error sending push notification", 500)
+			return echo.NewHTTPError(http.StatusInternalServerError, "Error sending push notification")
 		} else {
-			json.NewEncoder(w).Encode(res)
+			return c.JSON(http.StatusOK, res)
 		}
 	})
-	http.ListenAndServe(":8080", nil)
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
 type Body struct {
