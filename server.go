@@ -37,8 +37,8 @@ func main() {
 	}
 
 	topic := []string{"cn.sshterm.pro", "cn.sshterm.free", "cn.sshterm.dev"}
-
-	client := apns2.NewTokenClient(token).Development() //.Production()
+	clientDev := apns2.NewTokenClient(token).Development()
+	client := apns2.NewTokenClient(token).Production()
 	e := echo.New()
 	e.Use(middleware.BodyLimit("1M"))
 	config := middleware.RateLimiterConfig{
@@ -85,7 +85,7 @@ func main() {
 		if data.Priority > 10 || data.Priority < 5 {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid priority")
 		}
-
+		data.Notification.APS.Sound = "default"
 		notification := &apns2.Notification{
 			DeviceToken: data.Token,
 			Topic:       data.Topic,
@@ -93,7 +93,14 @@ func main() {
 			PushType:    apns2.PushTypeAlert,
 			Priority:    data.Priority,
 		}
-		res, err := client.Push(notification)
+
+		var res *apns2.Response
+		if data.Dev {
+			res, err = clientDev.Push(notification)
+		} else {
+			res, err = client.Push(notification)
+		}
+
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Error sending push notification")
 		} else {
@@ -104,13 +111,15 @@ func main() {
 }
 
 type Body struct {
+	Dev          bool         `json:"dev"`
 	Token        string       `json:"token"`
 	Topic        string       `json:"topic"`
 	Notification Notification `json:"notification"`
 	Priority     int          `json:"priority"`
 }
 type APS struct {
-	Alert Alert `json:"alert"`
+	Alert Alert  `json:"alert"`
+	Sound string `json:"sound"`
 }
 type Alert struct {
 	Title    string `json:"title"`
