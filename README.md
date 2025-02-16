@@ -46,7 +46,7 @@ curl -v \
         "priority": 10
       }'
 ```
-# return
+# response
 
 ```json
 {
