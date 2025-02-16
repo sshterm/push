@@ -6,7 +6,7 @@ topic: cn.sshterm.pro
 # The authentication token for accessing the push service
 token: 1234567890
 
-# The API endpoint of the push node
+# The API endpoint of the push node,https://push.sshterm.cn/apn_push (China)  https://push.ssh2.app/apn_push (Global)
 node: https://push.ssh2.app/apn_push
 
 # The subtitle for the push notifications

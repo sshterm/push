@@ -40,7 +40,7 @@ curl -v \
 ## Node
     https://push.sshterm.cn/apn_push (China)
     or
-    https://push.ssh2.app/apn_push
+    https://push.ssh2.app/apn_push (Global)
 
 ## Optional：
 
