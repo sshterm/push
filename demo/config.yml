@@ -19,4 +19,4 @@ load: 1.5
 priority: 10
 
 # Indicates whether the configuration is for development purposes
-dev: YES
+dev: NO
