@@ -40,7 +40,7 @@ func main() {
 	clientDev := apns2.NewTokenClient(token).Development()
 	client := apns2.NewTokenClient(token).Production()
 	e := echo.New()
-	e.Use(middleware.BodyLimit("1M"))
+	e.Use(middleware.BodyLimit("64K"))
 	config := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
