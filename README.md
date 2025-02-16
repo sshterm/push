@@ -26,6 +26,7 @@ docker run --rm -v "$PWD":/app -w /app golang:latest go build -trimpath -ldflags
     or
     cn.sshterm.free (SSH Term Free iOS 7.0+)
 
+# request
 ```
 curl -v \
   -X POST "https://push.sshterm.cn/apn_push" \
@@ -45,7 +46,17 @@ curl -v \
         "priority": 10
       }'
 ```
+# return
 
+```json
+{
+    "StatusCode": 200,
+    "Reason": "",
+    "ApnsID": "B45083AA-1847-534B-528D-076BDB9C5ACF",
+    "Timestamp": "0001-01-01T00:00:00Z",
+    "ApnsUniqueID": "825b0498-3068-2bf3-68de-26d6355b5b3b"
+}
+```
 ## 《Message Push Service Usage Agreement》
 
 ### I. Service Description
