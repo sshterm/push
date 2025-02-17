@@ -17,3 +17,6 @@ load: 1.5
 
 # The priority level of the messages, higher values may indicate higher priority，min: 5, max: 10
 priority: 10
+
+# Indicates whether the configuration is for development purposes
+dev: NO
