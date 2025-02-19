@@ -24,6 +24,29 @@ curl -v \
         "priority": 10
       }'
 ```
+
+OR
+
+```shell
+wget --header="Content-Type: application/json" \
+     --post-data='{
+        "token": "token",
+        "topic": "cn.sshterm.pro",
+        "notification": {
+          "aps": {
+            "alert": {
+              "title": "High server load",
+              "subtitle": "OA server issues",
+              "body": "cpu 500% mem 99% disk 99.9%"
+            }
+          }
+        },
+        "priority": 10
+      }' \
+     -O - \
+     "https://push.ssh2.app/apn_push"
+```
+
 # response
 
 HTTP 200-400 status code
