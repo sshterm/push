@@ -26,15 +26,7 @@ curl -v \
 ```
 # response
 
-```json
-{
-    "StatusCode": 200,
-    "Reason": "",
-    "ApnsID": "B45083AA-1847-534B-528D-076BDB9C5ACF",
-    "Timestamp": "0001-01-01T00:00:00Z",
-    "ApnsUniqueID": "825b0498-3068-2bf3-68de-26d6355b5b3b"
-}
-```
+HTTP 200-400 status code
 
 
 ## Node

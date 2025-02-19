@@ -34,7 +34,8 @@ func main() {
 		KeyID:   string(kid),
 		TeamID:  string(iss),
 	}
-
+	notificationsDev := make(chan *apns2.Notification, 1)
+	notifications := make(chan *apns2.Notification, 500)
 	topic := []string{"cn.sshterm.pro", "cn.sshterm.free", "cn.sshterm.dev"}
 	clientDev := apns2.NewTokenClient(token).Development()
 	client := apns2.NewTokenClient(token).Production()
@@ -76,9 +77,6 @@ func main() {
 		if !valid {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid topic")
 		}
-		if data.Priority > 10 || data.Priority < 5 {
-			return echo.NewHTTPError(http.StatusBadRequest, "Invalid priority")
-		}
 		data.Notification.APS.Sound = "default"
 		notification := &apns2.Notification{
 			DeviceToken: data.Token,
@@ -88,19 +86,24 @@ func main() {
 			Priority:    data.Priority,
 		}
 
-		var res *apns2.Response
 		if data.Dev {
-			res, err = clientDev.Push(notification)
+			notificationsDev <- notification
 		} else {
-			res, err = client.Push(notification)
+			notifications <- notification
 		}
-
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Error sending push notification")
-		} else {
-			return c.JSON(http.StatusOK, res)
-		}
+		return c.NoContent(http.StatusOK)
 	})
+
+	go func() {
+		for n := range notifications {
+			client.Push(n)
+		}
+	}()
+	go func() {
+		for n := range notificationsDev {
+			clientDev.Push(n)
+		}
+	}()
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -121,7 +124,7 @@ type (
 		Token        string       `json:"token" validate:"required"`
 		Topic        string       `json:"topic" validate:"required"`
 		Notification Notification `json:"notification" validate:"required"`
-		Priority     int          `json:"priority" validate:"required"`
+		Priority     int          `json:"priority" validate:"gte=1,lte=10"`
 	}
 	APS struct {
 		Alert Alert  `json:"alert" validate:"required"`
