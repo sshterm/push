@@ -64,9 +64,9 @@ HTTP 200-400 status code
 ### priority
     The priority of the notification. If you omit this header, APNs sets the notification priority to 10.Specify 10 to send the notification immediately.
 ### topic
-    cn.sshterm.pro (SSH Term Pro iOS 7.0+)
+    cn.sshterm.pro (SSH Term Pro (iOS macOS) 7.0.7+)
     or
-    cn.sshterm.free (SSH Term Free iOS 7.0+)
+    cn.sshterm.free (SSH Term Free (iOS macOS) 7.0.7+)
 
 
 # Message Push Service Usage Agreement
