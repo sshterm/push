@@ -5,7 +5,7 @@ SSH Term APP Apple Push Notifications
 # Demo
 
 # request
-```
+```shell
 curl -v \
   -X POST "https://push.ssh2.app/apn_push" \
   -H "Content-Type: application/json" \
@@ -34,7 +34,7 @@ HTTP 200-400 status code
     or
     https://push.ssh2.app/apn_push (Global)
 
-## Optional：
+## Optional:
 
 ### token:
     Get it in the app
