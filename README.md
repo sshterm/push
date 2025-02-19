@@ -44,6 +44,7 @@ wget --header="Content-Type: application/json" \
      -O - \
      "https://push.ssh2.app/apn_push"
 ```
+
 ## c
 ```c
 #include <stdio.h>
@@ -112,6 +113,49 @@ int main() {
     return 0;
 }
 ```
+
+## swift
+```swift
+import Foundation
+
+let url = URL(string: "https://push.ssh2.app/apn_push")!
+var request = URLRequest(url: url)
+request.httpMethod = "POST"
+request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+let data: [String: Any] = [
+    "token": "token",
+    "topic": "cn.sshterm.pro",
+    "notification": [
+        "aps": [
+            "alert": [
+                "title": "High server load",
+                "subtitle": "OA server issues",
+                "body": "cpu 500% mem 99% disk 99.9%"
+            ]
+        ]
+    ],
+    "priority": 10
+]
+
+do {
+    request.httpBody = try JSONSerialization.data(withJSONObject: data, options: [])
+} catch {
+    print(error)
+}
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+    if let error = error {
+        print(error)
+        return
+    }
+    if let data = data {
+        print(String(data: data, encoding: .utf8)!)
+    }
+}
+task.resume()
+```
+
 ## python
 ```python
 import requests
