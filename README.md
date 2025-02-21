@@ -6,43 +6,27 @@ SSH Term APP Apple Push Notifications
 
 ## curl
 ```shell
+TOKEN="your_unique_device_token"
+TITLE="High server load"
+SUBTITLE="OA server issues"
+BODY="cpu 500% mem 99% disk 99.9%"
+
 curl -X POST "https://push.ssh2.app/apn_push" \
   -H "Content-Type: application/json" \
   -d '{
-        "token": "token",
+        "token": "'"$TOKEN"'",
         "topic": "cn.sshterm.pro",
         "notification": {
           "aps": {
             "alert": {
-              "title": "High server load",
-              "subtitle": "OA server issues",
-              "body": "cpu 500% mem 99% disk 99.9%"
+              "title": "'"$TITLE"'",
+              "subtitle": "'"$SUBTITLE"'",
+              "body": "'"$BODY"'"
             }
           }
         },
         "priority": 10
       }'
-```
-
-## wget
-```shell
-wget --header="Content-Type: application/json" \
-     --post-data='{
-        "token": "token",
-        "topic": "cn.sshterm.pro",
-        "notification": {
-          "aps": {
-            "alert": {
-              "title": "High server load",
-              "subtitle": "OA server issues",
-              "body": "cpu 500% mem 99% disk 99.9%"
-            }
-          }
-        },
-        "priority": 10
-      }' \
-     -O - \
-     "https://push.ssh2.app/apn_push"
 ```
 
 # response
