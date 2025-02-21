@@ -6,16 +6,19 @@ SSH Term APP Apple Push Notifications
 
 ## curl
 ```shell
-TOKEN="your_unique_device_token"
+API_URL="https://push.ssh2.app/apn_push"
+TOKEN="your_device_token_here"
+TOPIC="cn.sshterm.pro"
 TITLE="High server load"
 SUBTITLE="OA server issues"
 BODY="cpu 500% mem 99% disk 99.9%"
+PRIORITY=10
 
-curl -X POST "https://push.ssh2.app/apn_push" \
+curl -X POST "$API_URL" \
   -H "Content-Type: application/json" \
   -d '{
         "token": "'"$TOKEN"'",
-        "topic": "cn.sshterm.pro",
+        "topic": "'"$TOPIC"'",
         "notification": {
           "aps": {
             "alert": {
@@ -25,7 +28,7 @@ curl -X POST "https://push.ssh2.app/apn_push" \
             }
           }
         },
-        "priority": 10
+        "priority": '"$PRIORITY"' 
       }'
 ```
 
